@@ -6,7 +6,6 @@ import pandas as pd
 import uvicorn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
-import random
 import time
 
 #Read datasets
