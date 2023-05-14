@@ -85,7 +85,7 @@ def retorno(pelicula:str):
 
 ML_dataset = ML_dataset.drop_duplicates(subset = "title")
 c = ML_dataset["vote_average"].mean()
-m = ML_dataset["vote_count"].quantile(0.75)
+m = ML_dataset["vote_count"].quantile(0.90)
 ML_dataset = ML_dataset.loc[ML_dataset["vote_count"] >= m]
 def weighted_rating(x, m = m, c = c):
     v = x["vote_count"]
