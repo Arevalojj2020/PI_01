@@ -1,4 +1,4 @@
-#Import Modules
+# Import Modules
 
 from fastapi import FastAPI
 import numpy as np
@@ -7,10 +7,10 @@ import uvicorn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
-#Read datasets
+# Load datasets
 
-clean_dataset = pd.read_csv("clean_movies_dataset.csv")
-ML_dataset = pd.read_csv("ML_dataset.csv")
+clean_dataset = pd.read_csv("datasets/clean_movies_dataset.csv")
+ML_dataset = pd.read_csv("datasets/ML_dataset.csv")
 
 # API structure
 
@@ -20,7 +20,7 @@ app = FastAPI()
 
 @app.get("/")
 def welcome():
-    return ("Welcome to the Movies API")
+    return ("Bienvenido al sistema de recomendación de películas!")
 
 # Endpoints functions
 
@@ -105,7 +105,7 @@ index = pd.Series(ML_dataset.index, index = ML_dataset["title"]).drop_duplicates
 def recomendacion(titulo:str):
     local_cosine_sim = cosine_sim
     if titulo not in index:
-        return "La película no se encuentra en el top 25 de mejores películas. Intenta con una mejor!"
+        return "La película no se encuentra entre el 10% de las mejores películas. Intenta con una mejor!"
     idx = index[titulo]
     sim_scores = list(enumerate(local_cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
