@@ -102,11 +102,12 @@ ML_dataset.reset_index(drop = True, inplace = True)
 index = pd.Series(ML_dataset.index, index = ML_dataset["title"]).drop_duplicates()
 
 @app.get("/recomendacion/{titulo}")
-def recomendacion(titulo:str, cosine_sim = cosine_sim):
+def recomendacion(titulo:str):
+    local_cosine_sim = cosine_sim
     if titulo not in index:
         return "La película no se encuentra en el top 25 de mejores películas. Intenta con una mejor!"
     idx = index[titulo]
-    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = list(enumerate(local_cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
     sim_scores = sim_scores[1:6]
     movie_indices = [i[0] for i in sim_scores]
