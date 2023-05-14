@@ -4,13 +4,13 @@ from fastapi import FastAPI
 import numpy as np
 import pandas as pd
 import uvicorn
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# from sklearn.metrics.pairwise import linear_kernel
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 
 #Read datasets
 
 clean_dataset = pd.read_csv("clean_movies_dataset.csv")
-# ML_dataset = pd.read_csv("movies_dataset.csv")
+ML_dataset = pd.read_csv("movies_dataset.csv")
 
 # API structure
 
@@ -83,32 +83,32 @@ def retorno(pelicula:str):
 
 # Recomendation structure
 
-# ML_dataset = ML_dataset.drop_duplicates(subset = "title")
-# c = ML_dataset["vote_average"].mean()
-# m = ML_dataset["vote_count"].quantile(0.75)
-# ML_dataset = ML_dataset.loc[ML_dataset["vote_count"] >= m]
-# def weighted_rating(x, m = m, c = c):
-#     v = x["vote_count"]
-#     R = x["vote_average"]
-#     return (v / (v + m) * R) + (m / (m + v) * c)
-# ML_dataset["score"] = ML_dataset.apply(weighted_rating, axis=1)
-# ML_dataset = ML_dataset.sort_values("score", ascending = False)
-# tfidf = TfidfVectorizer(stop_words = "english")
-# ML_dataset["overview"] = ML_dataset["overview"].fillna('')
-# tfidf_matrix = tfidf.fit_transform(ML_dataset["overview"])
-# tfidf.get_feature_names_out()
-# cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-# ML_dataset.reset_index(drop = True, inplace = True)
-# index = pd.Series(ML_dataset.index, index = ML_dataset["title"]).drop_duplicates()
+ML_dataset = ML_dataset.drop_duplicates(subset = "title")
+c = ML_dataset["vote_average"].mean()
+m = ML_dataset["vote_count"].quantile(0.75)
+ML_dataset = ML_dataset.loc[ML_dataset["vote_count"] >= m]
+def weighted_rating(x, m = m, c = c):
+    v = x["vote_count"]
+    R = x["vote_average"]
+    return (v / (v + m) * R) + (m / (m + v) * c)
+ML_dataset["score"] = ML_dataset.apply(weighted_rating, axis=1)
+ML_dataset = ML_dataset.sort_values("score", ascending = False)
+tfidf = TfidfVectorizer(stop_words = "english")
+ML_dataset["overview"] = ML_dataset["overview"].fillna('')
+tfidf_matrix = tfidf.fit_transform(ML_dataset["overview"])
+tfidf.get_feature_names_out()
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+ML_dataset.reset_index(drop = True, inplace = True)
+index = pd.Series(ML_dataset.index, index = ML_dataset["title"]).drop_duplicates()
 
-# @app.get("/recomendacion/{titulo}")
-# def recomendacion(titulo:str, cosine_sim = cosine_sim):
-#     if titulo not in index:
-#         return "La película no se encuentra en el top 25 de mejores películas. Intenta con una mejor!"
-#     idx = index[titulo]
-#     sim_scores = list(enumerate(cosine_sim[idx]))
-#     sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
-#     sim_scores = sim_scores[1:6]
-#     movie_indices = [i[0] for i in sim_scores]
-#     result = ML_dataset["title"].iloc[movie_indices]
-#     return {"lista recomendada" : list(result)}
+@app.get("/recomendacion/{titulo}")
+def recomendacion(titulo:str, cosine_sim = cosine_sim):
+    if titulo not in index:
+        return "La película no se encuentra en el top 25 de mejores películas. Intenta con una mejor!"
+    idx = index[titulo]
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
+    sim_scores = sim_scores[1:6]
+    movie_indices = [i[0] for i in sim_scores]
+    result = ML_dataset["title"].iloc[movie_indices]
+    return {"lista recomendada" : list(result)}
