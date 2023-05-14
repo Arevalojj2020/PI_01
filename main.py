@@ -10,7 +10,7 @@ from sklearn.metrics.pairwise import linear_kernel
 #Read datasets
 
 clean_dataset = pd.read_csv("clean_movies_dataset.csv")
-ML_dataset = pd.read_csv("movies_dataset.csv")
+ML_dataset = pd.read_csv("ML_dataset.csv")
 
 # API structure
 
