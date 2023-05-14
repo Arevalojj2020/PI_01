@@ -6,12 +6,11 @@ import pandas as pd
 import uvicorn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
-import time
 
 #Read datasets
 
 clean_dataset = pd.read_csv("clean_movies_dataset.csv")
-df = pd.read_csv("movies_dataset.csv")
+ML_dataset = pd.read_csv("movies_dataset.csv")
 
 # API structure
 
@@ -84,94 +83,32 @@ def retorno(pelicula:str):
 
 # Recomendation structure
 
+ML_dataset = ML_dataset.drop_duplicates(subset = "title")
+c = ML_dataset["vote_average"].mean()
+m = ML_dataset["vote_count"].quantile(0.75)
+ML_dataset = ML_dataset.loc[ML_dataset["vote_count"] >= m]
+def weighted_rating(x, m = m, c = c):
+    v = x["vote_count"]
+    R = x["vote_average"]
+    return (v / (v + m) * R) + (m / (m + v) * c)
+ML_dataset["score"] = ML_dataset.apply(weighted_rating, axis=1)
+ML_dataset = ML_dataset.sort_values("score", ascending = False)
 tfidf = TfidfVectorizer(stop_words = "english")
-df["overview"] = df["overview"].fillna('')
-tfidf_matrix_1 = tfidf.fit_transform(df["overview"][:11366])
-tfidf_matrix_2 = tfidf.fit_transform(df["overview"][11366:22732])
-tfidf_matrix_3 = tfidf.fit_transform(df["overview"][22732:34098])
-tfidf_matrix_4 = tfidf.fit_transform(df["overview"][34098:])
+ML_dataset["overview"] = ML_dataset["overview"].fillna('')
+tfidf_matrix = tfidf.fit_transform(ML_dataset["overview"])
 tfidf.get_feature_names_out()
-cosine_sim_1 = linear_kernel(tfidf_matrix_1, tfidf_matrix_1)
-time.sleep(15)
-cosine_sim_2 = linear_kernel(tfidf_matrix_2, tfidf_matrix_2)
-time.sleep(15)
-cosine_sim_3 = linear_kernel(tfidf_matrix_3, tfidf_matrix_3)
-time.sleep(15)
-cosine_sim_4 = linear_kernel(tfidf_matrix_4, tfidf_matrix_4)
-time.sleep(15)
-index_1 = df["title"][:11366]
-index_1.reset_index(drop = True, inplace = True)
-index_1.drop_duplicates(inplace=True)
-serie_1 = pd.Series(index_1.index)
-df_index_1 = pd.DataFrame({"title":index_1.values, "indices":serie_1.values})
-df_index_1.set_index("title")
-serie_index_1 = pd.Series(df_index_1.index, index = df_index_1["title"]).drop_duplicates()
-index_2 = df["title"][11366:22732]
-index_2.reset_index(drop = True, inplace = True)
-index_2.drop_duplicates(inplace=True)
-serie_2 = pd.Series(index_2.index)
-df_index_2 = pd.DataFrame({"title":index_2.values, "indices":serie_2.values})
-df_index_2.set_index("title")
-serie_index_2 = pd.Series(df_index_2.index, index = df_index_2["title"]).drop_duplicates()
-index_3 = df["title"][22732:34098]
-index_3.reset_index(drop = True, inplace = True)
-index_3.drop_duplicates(inplace=True)
-serie_3 = pd.Series(index_3.index)
-df_index_3 = pd.DataFrame({"title":index_3.values, "indices":serie_3.values})
-df_index_3.set_index("title")
-serie_index_3 = pd.Series(df_index_3.index, index = df_index_3["title"]).drop_duplicates()
-index_4 = df["title"][34098:]
-index_4.reset_index(drop = True, inplace = True)
-index_4.drop_duplicates(inplace=True)
-serie_4 = pd.Series(index_4.index)
-df_index_4 = pd.DataFrame({"title":index_4.values, "indices":serie_4.values})
-df_index_4.set_index("title")
-serie_index_4 = pd.Series(df_index_4.index, index = df_index_4["title"]).drop_duplicates()
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+ML_dataset.reset_index(drop = True, inplace = True)
+index = pd.Series(ML_dataset.index, index = ML_dataset["title"]).drop_duplicates()
 
 @app.get("/recomendacion/{titulo}")
-def recomendacion(titulo:str):
-    
-    functions = [get_recommendations_1, get_recommendations_2, get_recommendations_3, get_recommendations_4]
-    
-    for function in functions:
-        try:
-            result = function(titulo)
-            return {"lista recomendada":list(result)}
-        except Exception:
-            pass
-
-    return "Movie not found. Please try another one!"
-
-def get_recommendations_1(titulo, cosine_sim = cosine_sim_1):
-    idx = serie_index_1[titulo]
+def recomendacion(titulo:str, cosine_sim = cosine_sim):
+    if titulo not in index:
+        return "La película no se encuentra en el top 25 de mejores películas. Intenta con una mejor!"
+    idx = index[titulo]
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
     sim_scores = sim_scores[1:6]
     movie_indices = [i[0] for i in sim_scores]
-    return df["title"].iloc[movie_indices]
-
-
-def get_recommendations_2(titulo, cosine_sim = cosine_sim_2):
-    idx = serie_index_2[titulo]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
-    sim_scores = sim_scores[1:6]
-    movie_indices = [i[0] for i in sim_scores]
-    return df["title"].iloc[movie_indices]
-
-
-def get_recommendations_3(titulo, cosine_sim = cosine_sim_3):
-    idx = serie_index_3[titulo]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
-    sim_scores = sim_scores[1:6]
-    movie_indices = [i[0] for i in sim_scores]
-    return df["title"].iloc[movie_indices]
-
-def get_recommendations_4(titulo, cosine_sim = cosine_sim_4):
-    idx = serie_index_4[titulo]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)
-    sim_scores = sim_scores[1:6]
-    movie_indices = [i[0] for i in sim_scores]
-    return df["title"].iloc[movie_indices]
+    result = ML_dataset["title"].iloc[movie_indices]
+    return {"lista recomendada" : list(result)}
