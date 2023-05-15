@@ -19,7 +19,7 @@ app = FastAPI()
 # Welcome
 
 @app.get("/")
-def welcome():
+def Bienvenida():
     return ("Bienvenido al sistema de recomendación de películas!")
 
 # Endpoints functions
