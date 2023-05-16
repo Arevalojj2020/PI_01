@@ -31,4 +31,5 @@ The workflow consists of:
          + c = average of all vote averages in the dataset
       The equation is as follows:
       $$(v/(v+m) * R) + (m/(m+v) * c)$$
-- Deploying API
+- Deploying API: (https://github.com/Arevalojj2020/PI_01/blob/main/main.py)
+    + To make our API consumable, create a «main.py» file using the FastAPI framework. Then deploy it on Render by starting this               repository with the «requirements.txt» file.
