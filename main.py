@@ -45,7 +45,7 @@ def peliculas_dia(dia:str):
     dia = dia.lower()
     if dia in days:
         weekday_movies = clean_dataset.loc[clean_dataset["release_weekday"] == dia].count()
-        return {"dia" : dia, "cantidad" : weekday_movies["release_weekday"]}
+        return {"dia" : dia, "cantidad" : str(weekday_movies["release_weekday"])}
     else: return "Ingrese un dia válido"
 
 @app.get("/franquicia/{franquicia}")
@@ -60,7 +60,7 @@ def franquicia(franquicia:str):
         count = franchise["belongs_to_collection"].count()
         total_earning = franchise["revenue"].sum()
         earning_mean = franchise["revenue"].mean()
-        return {"franquicia" : franquicia, "cantidad" : count, "ganancia_total" : round(total_earning, 2), "ganancia_promedio" : round(earning_mean, 2)}
+        return {"franquicia" : franquicia, "cantidad" : str(count), "ganancia_total" : str(round(total_earning, 2)), "ganancia_promedio" : str(round(earning_mean, 2))}
     
     else: return "Ingrese una franquicia válida"
 
@@ -74,7 +74,7 @@ def peliculas_pais(pais:str):
     count = country["production_countries"].count()
     if count == 0:
         return "Ingrese un país válido"
-    else: return {"pais" : pais, "cantidad" : count}
+    else: return {"pais" : pais, "cantidad" : str(count)}
 
 @app.get("/productora/{productora}")
 def productoras(productora:str):
@@ -87,7 +87,7 @@ def productoras(productora:str):
     total_earning = company["revenue"].sum()
     if count == 0:
         return "Ingrese una productora válida"
-    else: return {"productora" : productora, "ganancia_total" : round(total_earning, 2), "cantidad" : count}
+    else: return {"productora" : productora, "ganancia_total" : str(round(total_earning, 2)), "cantidad" : str(count)}
 
 @app.get("/retorno/{pelicula}")
 def retorno(pelicula:str):
@@ -102,7 +102,7 @@ def retorno(pelicula:str):
         earning = movie["revenue"].iloc[0]
         returns = movie["return"].iloc[0]
         realese_year = movie["release_year"].iloc[0]
-        return {"pelicula" : pelicula, "inversion" : round(investment, 2), "ganacia" : round(earning, 2), "retorno" : round(returns, 2), "anio" : realese_year}
+        return {"pelicula" : pelicula, "inversion" : str(round(investment, 2)), "ganacia" : str(round(earning, 2)), "retorno" : str(round(returns, 2)), "anio" : str(realese_year)}
     else: return "Ingrese un película válida"
 
 # Recomendation structure
