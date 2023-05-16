@@ -27,7 +27,7 @@ def Bienvenida():
 @app.get("/peliculas_mes/{mes}")
 def peliculas_mes(mes:str):
     
-    '''Se ingresa el mes y la funcion retorna la cantidad de peliculas que se estrenaron ese mes históricamente'''
+    '''Se ingresa el mes y la funcion retorna la cantidad de peliculas que se estrenaron ese mes históricamente.'''
     
     months = list(clean_dataset["release_month"].unique())
     mes = mes.lower()
@@ -39,7 +39,7 @@ def peliculas_mes(mes:str):
 @app.get("/peliculas_dia/{dia}")
 def peliculas_dia(dia:str):
     
-    '''Se ingresa el dia y la función retorna la cantidad de películas que se estrenaron ese dia históricamente'''
+    '''Se ingresa el dia y la función retorna la cantidad de películas que se estrenaron ese dia históricamente.'''
     
     days = list(clean_dataset["release_weekday"].unique())
     dia = dia.lower()
@@ -51,7 +51,7 @@ def peliculas_dia(dia:str):
 @app.get("/franquicia/{franquicia}")
 def franquicia(franquicia:str):
     
-    '''Se ingresa la franquicia, retornando la cantidad de películas, ganancia total y promedio'''
+    '''Se ingresa la franquicia, retornando la cantidad de películas, ganancia total y promedio.'''
     
     franchise = clean_dataset["belongs_to_collection"].unique()
     franchise = list(franchise)
@@ -67,7 +67,7 @@ def franquicia(franquicia:str):
 @app.get("/peliculas_pais/{pais}")
 def peliculas_pais(pais:str):
     
-    '''Ingresas el país, retornando la cantidad de películas producidas en el mismo'''
+    '''Ingresas el país, retornando la cantidad de películas producidas en el mismo.'''
     
     clean_dataset["production_countries"] = clean_dataset["production_countries"].fillna("")
     country = clean_dataset.loc[clean_dataset["production_countries"].str.contains(pais)]
@@ -79,7 +79,7 @@ def peliculas_pais(pais:str):
 @app.get("/productora/{productora}")
 def productoras(productora:str):
     
-    '''Ingresas la productora, retornando la ganancia total y la cantidad de películas que produjeron'''
+    '''Ingresas la productora, retornando la ganancia total y la cantidad de películas que produjeron.'''
     
     clean_dataset["production_companies"] = clean_dataset["production_companies"].fillna("")
     company = clean_dataset.loc[clean_dataset["production_companies"].str.contains(productora)]
@@ -92,7 +92,7 @@ def productoras(productora:str):
 @app.get("/retorno/{pelicula}")
 def retorno(pelicula:str):
     
-    '''Ingresas la película, retornando la inversión, la ganancia, el retorno y el año en el que se lanzó'''
+    '''Ingresas la película, retornando la inversión, la ganancia, el retorno y el año en el que se lanzó.'''
     
     titles = list(clean_dataset["title"].unique())
     if pelicula in titles:
@@ -128,7 +128,7 @@ index = pd.Series(ML_dataset.index, index = ML_dataset["title"]).drop_duplicates
 @app.get("/recomendacion/{titulo}")
 def recomendacion(titulo:str):
     
-    '''Ingresas un nombre de pelicula y te recomienda 5 similares en una lista'''
+    '''Ingresas un nombre de pelicula y te recomienda 5 similares en una lista.'''
     
     local_cosine_sim = cosine_sim
     if titulo not in index:
