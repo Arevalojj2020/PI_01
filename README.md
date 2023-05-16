@@ -20,7 +20,8 @@ The workflow consists of:
         + Vectorize the overviews and remove stop words to determine the frequency of each word's usage
         + Build a matrix with the results
         + Create a word map of the attribute
-        + Calculate the relationship between overviews using cosine similarity scores                                                             + Create a movie title map
+        + Calculate the relationship between overviews using cosine similarity scores
+        + Create a movie title map                                                  
         + Finally, build a function that takes a movie title as input and returns a list of five similar movies
     + Due to limited resources, we will only be able to use approximately 10% of the dataset. However, we will not randomly select             movies. Instead, we will order the movies based on a rating ranking derived from reviews. To do this, we will use the average             vote of the movie (vote_average). However, there is a possibility that a movie with a high average vote has very few reviews,             which would not be balanced with another movie with the same average vote but a higher number of reviews. Therefore, we will use         the values of the vote_count attribute to calculate a "weighted_rating" in order to maintain a balanced rating ranking. 
       To calculate this new attribute, we will use an equation that includes the following variables:
