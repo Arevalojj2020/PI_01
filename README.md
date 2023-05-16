@@ -32,7 +32,7 @@ The workflow consists of:
 - Deploying API: (https://github.com/Arevalojj2020/PI_01/blob/main/main.py)
     + To make our API consumable, create a «main.py» file using the FastAPI framework. Then deploy it on Render by starting this               repository with the «requirements.txt» file.
     + Create a virtual environment with the necessary libraries for execution (https://github.com/Arevalojj2020/PI_01/tree/main/venv)
-    + The functions *peliculas_mes(mes)* and *peliculas_dia(dia)* are case insensitive
+    + The functions *peliculas_mes(mes)* and *peliculas_dia(dia)* aren´t case sensitive
     + In the functions *franquicia(franquicia)*, *peliculas_pais(pais)*, *productoras(productora)* and *retorno(pelicula)*, the                 parameter should be entered exactly as it appears in the dataset to obtain the expected result
     + Render deploy link: https://sistema-recomendacion-alg0.onrender.com/docs
 
