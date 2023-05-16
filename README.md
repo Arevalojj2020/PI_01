@@ -9,8 +9,6 @@ The workflow consists of:
     + Clean and prepare the data, finally save the clean dataset for the API functions building
 - API functions (https://github.com/Arevalojj2020/PI_01/blob/main/Processing/API_Functions.ipynb)
     + Build the structure of the functions that will be implemented in the API, using the clean dataset
-        + The functions *peliculas_mes(mes)* and *peliculas_dia(dia)* are case insensitive
-        + In the functions *franquicia(franquicia)*, *peliculas_pais(pais)*, *productoras(productora)* and *retorno(pelicula)*, the                   parameter should be entered exactly as it appears in the dataset to obtain the expected result
 - Exploratory data analysis (EDA) (https://github.com/Arevalojj2020/PI_01/blob/main/Processing/EDA.ipynb)
     + Gather information and draw conclusions from the available attributes. The dataset used is the complete one, not the cleaned one,         to have much more information to analyze
 - Recommendation system (https://github.com/Arevalojj2020/PI_01/blob/main/Processing/Recommendation_System.ipynb)
@@ -33,3 +31,6 @@ The workflow consists of:
       $$(v/(v+m) * R) + (m/(m+v) * c)$$
 - Deploying API: (https://github.com/Arevalojj2020/PI_01/blob/main/main.py)
     + To make our API consumable, create a «main.py» file using the FastAPI framework. Then deploy it on Render by starting this               repository with the «requirements.txt» file.
+    + The functions *peliculas_mes(mes)* and *peliculas_dia(dia)* are case insensitive
+       + In the functions *franquicia(franquicia)*, *peliculas_pais(pais)*, *productoras(productora)* and *retorno(pelicula)*, the                parameter should be entered exactly as it appears in the dataset to obtain the expected result
+       + Render deploy link: https://sistema-recomendacion-alg0.onrender.com/docs
