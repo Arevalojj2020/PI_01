@@ -27,59 +27,83 @@ def Bienvenida():
 @app.get("/peliculas_mes/{mes}")
 def peliculas_mes(mes:str):
     
-    month_movies = clean_dataset.loc[clean_dataset["release_month"] == mes].count()
-    month_movies = str(month_movies["release_month"])
+    '''Se ingresa el mes y la funcion retorna la cantidad de peliculas que se estrenaron ese mes históricamente'''
     
-    return {"mes" : mes, "cantidad" : month_movies}
+    months = list(clean_dataset["release_month"].unique())
+    mes = mes.lower()
+    if mes in months:
+        month_movies = clean_dataset.loc[clean_dataset["release_month"] == mes].count()
+        return {"mes" : mes, "cantidad" : str(month_movies["release_month"])}
+    else: return "Ingrese un mes válido"
 
 @app.get("/peliculas_dia/{dia}")
 def peliculas_dia(dia:str):
     
-    weekday_movies = clean_dataset.loc[clean_dataset["release_weekday"] == dia].count()
-    weekday_movies = str(weekday_movies["release_weekday"])
+    '''Se ingresa el dia y la función retorna la cantidad de películas que se estrenaron ese dia históricamente'''
     
-    return {"dia" : dia, "cantidad" : weekday_movies}
+    days = list(clean_dataset["release_weekday"].unique())
+    dia = dia.lower()
+    if dia in days:
+        weekday_movies = clean_dataset.loc[clean_dataset["release_weekday"] == dia].count()
+        return {"dia" : dia, "cantidad" : weekday_movies["release_weekday"]}
+    else: return "Ingrese un dia válido"
 
 @app.get("/franquicia/{franquicia}")
 def franquicia(franquicia:str):
     
-    franchise = clean_dataset.loc[clean_dataset["belongs_to_collection"] == franquicia]
-    count = str(franchise["belongs_to_collection"].count())
-    total_earning = str(round(franchise["revenue"].sum(), 2))
-    earning_mean = str(round(franchise["revenue"].mean(), 2))
+    '''Se ingresa la franquicia, retornando la cantidad de películas, ganancia total y promedio'''
     
-    return {"franquicia" : franquicia, "cantidad" : count, "ganancia_total" : total_earning, "ganancia_promedio" : earning_mean}
+    franchise = clean_dataset["belongs_to_collection"].unique()
+    franchise = list(franchise)
+    if franquicia in franchise:
+        franchise = clean_dataset.loc[clean_dataset["belongs_to_collection"] == franquicia]
+        count = franchise["belongs_to_collection"].count()
+        total_earning = franchise["revenue"].sum()
+        earning_mean = franchise["revenue"].mean()
+        return {"franquicia" : franquicia, "cantidad" : count, "ganancia_total" : round(total_earning, 2), "ganancia_promedio" : round(earning_mean, 2)}
+    
+    else: return "Ingrese una franquicia válida"
 
 @app.get("/peliculas_pais/{pais}")
 def peliculas_pais(pais:str):
     
+    '''Ingresas el país, retornando la cantidad de películas producidas en el mismo'''
+    
     clean_dataset["production_countries"] = clean_dataset["production_countries"].fillna("")
     country = clean_dataset.loc[clean_dataset["production_countries"].str.contains(pais)]
-    count = str(country["production_countries"].count())
-    
-    return {"pais" : pais, "cantidad" : count}
+    count = country["production_countries"].count()
+    if count == 0:
+        return "Ingrese un país válido"
+    else: return {"pais" : pais, "cantidad" : count}
 
 @app.get("/productora/{productora}")
 def productoras(productora:str):
     
+    '''Ingresas la productora, retornando la ganancia total y la cantidad de películas que produjeron'''
+    
     clean_dataset["production_companies"] = clean_dataset["production_companies"].fillna("")
     company = clean_dataset.loc[clean_dataset["production_companies"].str.contains(productora)]
-    count = str(company["production_companies"].count())
-    total_earning = str(round(company["revenue"].sum(), 2))
-    
-    return {"productora" : productora, "ganancia_total" : total_earning, "cantidad" : count}
+    count = company["production_companies"].count()
+    total_earning = company["revenue"].sum()
+    if count == 0:
+        return "Ingrese una productora válida"
+    else: return {"productora" : productora, "ganancia_total" : round(total_earning, 2), "cantidad" : count}
 
 @app.get("/retorno/{pelicula}")
 def retorno(pelicula:str):
     
-    movie = clean_dataset.loc[clean_dataset["title"] == pelicula]
-    movie = movie.head(1)
-    investment = str(round(movie["budget"].iloc[0], 2))
-    earning = str(round(movie["revenue"].iloc[0], 2))
-    returns = str(round(movie["return"].iloc[0], 2))
-    realese_year = str(movie["release_year"].iloc[0])
-      
-    return {"pelicula" : pelicula, "inversion" : investment, "ganacia" : earning, "retorno" : returns, "anio" : realese_year}
+    '''Ingresas la película, retornando la inversión, la ganancia, el retorno y el año en el que se lanzó'''
+    
+    titles = list(clean_dataset["title"].unique())
+    if pelicula in titles:
+        movie = clean_dataset.loc[clean_dataset["title"] == pelicula]
+        movie = movie.head(1)
+        investment = movie["budget"].iloc[0]
+        earning = movie["revenue"].iloc[0]
+        returns = movie["return"].iloc[0]
+        realese_year = movie["release_year"].iloc[0]
+        return {"pelicula" : pelicula, "inversion" : round(investment, 2), "ganacia" : round(earning, 2), "retorno" : round(returns, 2), "anio" : realese_year}
+    else: return "Ingrese un película válida"
 
 # Recomendation structure
 
@@ -103,6 +127,9 @@ index = pd.Series(ML_dataset.index, index = ML_dataset["title"]).drop_duplicates
 
 @app.get("/recomendacion/{titulo}")
 def recomendacion(titulo:str):
+    
+    '''Ingresas un nombre de pelicula y te recomienda 5 similares en una lista'''
+    
     local_cosine_sim = cosine_sim
     if titulo not in index:
         return "La película no se encuentra entre el 10% de las mejores películas. Intenta con una mejor!"
